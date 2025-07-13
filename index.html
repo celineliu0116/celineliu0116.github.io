@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celine Liu - UC Berkeley Computer Science</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --secondary-color: #1e293b;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-primary: rgba(15, 23, 42, 0.9);
+            --text-secondary: rgba(100, 116, 139, 0.8);
+            --text-muted: rgba(148, 163, 184, 0.7);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: rgba(31, 38, 135, 0.37);
+            --ml-accent: #8b5cf6;
+            --ml-secondary: #a855f7;
+            --backdrop-blur: blur(16px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            z-index: -1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translate(0px, 0px) rotate(0deg); 
+            }
+            33% { 
+                transform: translate(30px, -30px) rotate(120deg); 
+            }
+            66% { 
+                transform: translate(-20px, 20px) rotate(240deg); 
+            }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Glass morphism utility */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px var(--glass-shadow);
+        }
+
+        .glass-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-hover:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(31, 38, 135, 0.4);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: rgba(255, 255, 255, 1);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--ml-accent), var(--ml-secondary));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 80px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            max-width: 700px;
+        }
+
+        .university-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 24px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 16px;
+            line-height: 1.1;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 24px;
+            font-weight: 500;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-description {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 40px;
+            line-height: 1.6;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        }
+
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(31, 38, 135, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(139, 92, 246, 0.2);
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(139, 92, 246, 0.3);
+            border-color: rgba(139, 92, 246, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 48px;
+            text-align: center;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 8px 32px var(--glass-shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(31, 38, 135, 0.4);
+        }
+
+        /* Education Section */
+        .education-card {
+            margin-bottom: 48px;
+        }
+
+        .education-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .education-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 4px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .education-degree {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .education-meta {
+            text-align: right;
+        }
+
+        .gpa {
+            background: rgba(139, 92, 246, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            margin-bottom: 4px;
+            display: inline-block;
+        }
+
+        .graduation {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .coursework {
+            margin-top: 16px;
+        }
+
+        .coursework-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 8px;
+        }
+
+        .coursework-list {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.6;
+        }
+
+        /* Experience Section */
+        .experience-grid {
+            display: grid;
+            gap: 32px;
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .experience-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 4px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .experience-company {
+            font-size: 16px;
+            color: rgba(139, 92, 246, 0.9);
+            font-weight: 600;
+        }
+
+        .experience-date {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .experience-description {
+            font-size: 16px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 16px;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tech-tag {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.85);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .tech-tag:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Projects Section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 32px;
+        }
+
+        .project-card {
+            position: relative;
+        }
+
+        .project-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--ml-accent), var(--ml-secondary));
+            border-radius: 20px 20px 0 0;
+        }
+
+        .project-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 12px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .ml-tag {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(168, 85, 247, 0.3));
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.95);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+        }
+
+        /* Contact Section */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-card {
+            text-align: center;
+            padding: 24px;
+        }
+
+        .contact-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .contact-info {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .contact-info a {
+            color: rgba(139, 92, 246, 0.9);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .contact-info a:hover {
+            color: rgba(168, 85, 247, 1);
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            padding: 32px 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Floating elements */
+        .floating-shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float-shapes 15s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .floating-shape:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            width: 60px;
+            height: 60px;
+            background: rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            animation-delay: 0s;
+        }
+
+        .floating-shape:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            width: 40px;
+            height: 40px;
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 30%;
+            animation-delay: 5s;
+        }
+
+        .floating-shape:nth-child(3) {
+            bottom: 30%;
+            left: 20%;
+            width: 80px;
+            height: 80px;
+            background: rgba(168, 85, 247, 0.2);
+            border-radius: 40%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float-shapes {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero-subtitle {
+                font-size: 20px;
+            }
+            
+            .experience-header,
+            .education-header {
+                flex-direction: column;
+                align-items: start;
+                gap: 12px;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+
+            .glass-card {
+                padding: 24px;
+            }
+        }
+
+        /* Glass reflection effect */
+        .glass-reflection {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-reflection::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+
+        .glass-reflection:hover::before {
+            opacity: 1;
+            animation: shine 0.6s ease-in-out;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+
+    <header>
+        <nav class="container">
+            <div class="logo">Celine Liu</div>
+            <ul class="nav-links">
+                <li><a href="#education">Education</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="glass-card glass-reflection project-card">
+                    <h3 class="project-title">PintOS Operating System</h3>
+                    <p class="project-description">
+                        Built functional OS in embedded C with low-level process/file syscalls and concurrency primitives. 
+                        Extended file system with caching, subdirectories, and dynamic file sizing. 
+                        Implemented custom schedulers optimized for resource-constrained environments.
+                    </p>
+                    <div class="project-tech">
+                        <span class="tech-tag">C</span>
+                        <span class="tech-tag">Systems Programming</span>
+                        <span class="tech-tag">Concurrency</span>
+                        <span class="tech-tag">File Systems</span>
+                    </div>
+                </div>
+                <div class="glass-card glass-reflection project-card">
+                    <h3 class="project-title">Secure File Transfer Protocol</h3>
+                    <p class="project-description">
+                        Implemented end-to-end encrypted file sharing system in Go using authenticated 
+                        Diffie-Hellman key exchange. Defended against replay, MITM, and injection attacks 
+                        with comprehensive security testing and validation.
+                    </p>
+                    <div class="project-tech">
+                        <span class="tech-tag">Go</span>
+                        <span class="tech-tag">Cryptography</span>
+                        <span class="tech-tag">Security</span>
+                        <span class="tech-tag">Network Programming</span>
+                    </div>
+                </div>
+                <div class="glass-card glass-reflection project-card">
+                    <h3 class="project-title">Market Trend Analysis System</h3>
+                    <p class="project-description">
+                        Applied signal processing techniques including edge detection and noise reduction on 1D signals. 
+                        Engineered MACD indicator with convolution-based Exponential Moving Average filters 
+                        to analyze stock price trends and identify investment opportunities.
+                    </p>
+                    <div class="project-tech">
+                        <span class="ml-tag">Signal Processing</span>
+                        <span class="tech-tag">MATLAB</span>
+                        <span class="tech-tag">Financial Modeling</span>
+                        <span class="tech-tag">Algorithm Design</span>
+                    </div>
+                </div>
+                <div class="glass-card glass-reflection project-card">
+                    <h3 class="project-title">Berkeley Sensor Data Pipeline</h3>
+                    <p class="project-description">
+                        Cleaned and enriched UC Berkeley sensor data using PostgreSQL with advanced techniques. 
+                        Indexed and aggregated unstructured metadata in MongoDB, 
+                        achieving 30% improvement in data quality metrics through automated ETL processes.
+                    </p>
+                    <div class="project-tech">
+                        <span class="ml-tag">Data Engineering</span>
+                        <span class="tech-tag">PostgreSQL</span>
+                        <span class="tech-tag">MongoDB</span>
+                        <span class="tech-tag">ETL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section">
+        <div class="container">
+            <h2 class="section-title">Contact</h2>
+            <div class="contact-grid">
+                <div class="glass-card glass-reflection contact-card">
+                    <h3 class="contact-title">Email</h3>
+                    <div class="contact-info">
+                        <a href="mailto:celinelyj@berkeley.edu">celinelyj@berkeley.edu</a>
+                    </div>
+                </div>
+                <div class="glass-card glass-reflection contact-card">
+                    <h3 class="contact-title">Phone</h3>
+                    <div class="contact-info">
+                        <a href="tel:+15105709007">(510) 570-9007</a>
+                    </div>
+                </div>
+                <div class="glass-card glass-reflection contact-card">
+                    <h3 class="contact-title">LinkedIn</h3>
+                    <div class="contact-info">
+                        <a href="https://linkedin.com/in/celineliu" target="_blank">linkedin.com/in/celineliu</a>
+                    </div>
+                </div>
+                <div class="glass-card glass-reflection contact-card">
+                    <h3 class="contact-title">GitHub</h3>
+                    <div class="contact-info">
+                        <a href="https://github.com/celineliu0116" target="_blank">github.com/celineliu0116</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-text">
+                © 2025 Celine Liu
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerOffset = 80;
+                    const elementPosition = target.offsetTop;
+                    const offsetPosition = elementPosition - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Enhanced header scroll effect with glass morphism
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            const scrolled = window.scrollY;
+            
+            if (scrolled > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.15)';
+                header.style.backdropFilter = 'blur(25px)';
+                header.style.boxShadow = '0 8px 32px rgba(31, 38, 135, 0.37)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.1)';
+                header.style.backdropFilter = 'blur(20px)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Parallax effect for floating background
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('body::before');
+            const shapes = document.querySelectorAll('.floating-shape');
+            
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.5;
+                shape.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+
+        // Enhanced glass card interactions
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', function(e) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+
+            card.addEventListener('mousemove', function(e) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+
+                card.style.transform = `translateY(-8px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            card.addEventListener('mouseleave', function() {
+                card.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
+            });
+        });
+
+        // Dynamic background color shifting
+        let hue = 0;
+        setInterval(() => {
+            hue = (hue + 0.5) % 360;
+            document.body.style.background = `linear-gradient(135deg, 
+                hsl(${hue}, 70%, 60%) 0%, 
+                hsl(${(hue + 60) % 360}, 70%, 65%) 50%, 
+                hsl(${(hue + 120) % 360}, 70%, 70%) 100%)`;
+        }, 100);
+
+        // Glass reflection effect on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    
+                    // Trigger shine effect
+                    setTimeout(() => {
+                        if (entry.target.classList.contains('glass-reflection')) {
+                            entry.target.style.setProperty('--shine-opacity', '1');
+                            setTimeout(() => {
+                                entry.target.style.setProperty('--shine-opacity', '0');
+                            }, 600);
+                        }
+                    }, Math.random() * 500);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all glass cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            observer.observe(card);
+        });
+
+        // Add cursor trail effect
+        const createParticle = (x, y) => {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.width = '4px';
+            particle.style.height = '4px';
+            particle.style.backgroundColor = 'rgba(139, 92, 246, 0.6)';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '9999';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.transition = 'all 0.5s ease-out';
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.style.opacity = '0';
+                particle.style.transform = 'scale(0)';
+                setTimeout(() => {
+                    document.body.removeChild(particle);
+                }, 500);
+            }, 100);
+        };
+
+        let lastParticleTime = 0;
+        document.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            if (now - lastParticleTime > 50) { // Throttle particle creation
+                createParticle(e.clientX, e.clientY);
+                lastParticleTime = now;
+            }
+        });
+    </script>
+</body>
+</html>university-badge">UC Berkeley Computer Science</div>
+                <h1>Celine Liu</h1>
+                <p class="hero-subtitle">New Graduate • Machine Learning & Software Engineering</p>
+                <p class="hero-description">
+                    Computer Science graduate from UC Berkeley specializing in machine learning systems, 
+                    natural language processing, and scalable software development.
+                </p>
+                <div class="cta-buttons">
+                    <a href="https://github.com/celineliu0116" class="btn btn-primary">GitHub</a>
+                    <a href="https://linkedin.com/in/celineliu" class="btn btn-secondary">LinkedIn</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="education" class="section">
+        <div class="container">
+            <h2 class="section-title">Education</h2>
+            <div class="glass-card glass-reflection education-card">
+                <div class="education-header">
+                    <div>
+                        <h3 class="education-title">University of California, Berkeley</h3>
+                        <div class="education-degree">Bachelor of Science in Computer Science</div>
+                    </div>
+                    <div class="education-meta">
+                        <div class="gpa">GPA: 3.7/4.0</div>
+                        <div class="graduation">May 2025</div>
+                    </div>
+                </div>
+                <div class="coursework">
+                    <div class="coursework-title">Machine Learning & AI Coursework:</div>
+                    <div class="coursework-list">
+                        Deep Learning • Natural Language Processing • Data Engineering • 
+                        Computer Vision • Reinforcement Learning • Statistical Learning Theory
+                    </div>
+                </div>
+                <div class="coursework" style="margin-top: 12px;">
+                    <div class="coursework-title">Systems & Engineering:</div>
+                    <div class="coursework-list">
+                        Operating Systems • Computer Architecture • Distributed Systems • 
+                        Computer Security • Efficient Algorithms • Database Systems
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience" class="section">
+        <div class="container">
+            <h2 class="section-title">Experience</h2>
+            <div class="experience-grid">
+                <div class="glass-card glass-reflection">
+                    <div class="experience-header">
+                        <div>
+                            <h3 class="experience-title">Machine Learning Engineer</h3>
+                            <div class="experience-company">BLCK UNICRN</div>
+                        </div>
+                        <div class="experience-date">Sep 2024 - May 2025</div>
+                    </div>
+                    <p class="experience-description">
+                        Built LangChain-based multi-agent AI system for real-time experience ideation. 
+                        Improved intent recognition by 32% using embedding similarity techniques. 
+                        Enhanced chatbot performance with GPT-4 API integration and RAG implementation using Chroma DB.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="ml-tag">LangChain</span>
+                        <span class="ml-tag">GPT-4</span>
+                        <span class="ml-tag">RAG</span>
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Chroma DB</span>
+                        <span class="tech-tag">DALL·E 3</span>
+                    </div>
+                </div>
+                <div class="glass-card glass-reflection">
+                    <div class="experience-header">
+                        <div>
+                            <h3 class="experience-title">Founding Engineer</h3>
+                            <div class="experience-company">I-Learning</div>
+                        </div>
+                        <div class="experience-date">Jan 2023 - Present</div>
+                    </div>
+                    <p class="experience-description">
+                        Deployed OpenAI-based learning tools using RLHF for personalized study workflows. 
+                        Created voice recognition system with TensorFlow Decision Forests, scaling to 2,000+ active users. 
+                        Developed vocabulary lookup features using OpenCV and computer vision techniques.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="ml-tag">RLHF</span>
+                        <span class="ml-tag">TensorFlow</span>
+                        <span class="ml-tag">OpenCV</span>
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Firestore</span>
+                        <span class="tech-tag">OpenAI API</span>
+                    </div>
+                </div>
+                <div class="glass-card glass-reflection">
+                    <div class="experience-header">
+                        <div>
+                            <h3 class="experience-title">Software Engineer Intern</h3>
+                            <div class="experience-company">Diffco</div>
+                        </div>
+                        <div class="experience-date">May 2024 - Aug 2024</div>
+                    </div>
+                    <p class="experience-description">
+                        Designed credit risk models increasing client assessment capacity by 12%. 
+                        Fine-tuned DistilBERT for sentiment analysis delivering real-time insights. 
+                        Built RESTful APIs reducing payment system latency by 20%.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="ml-tag">DistilBERT</span>
+                        <span class="ml-tag">NLP</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">MongoDB</span>
+                        <span class="tech-tag">Express</span>
+                        <span class="tech-tag">Python</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section">
+        <div class="container">
+            <h2 class="section-title">Projects</h2>
+            <div class="projects-grid">
+                <div class="glass-card glass-reflection project-card">
+                    <h3 class="project-title">Financial NLP Classification</h3>
+                    <p class="project-description">
+                        Developed annotation guidelines and labeled 1,000+ earnings call transcripts. 
+                        Fine-tuned multi-class logistic regression and XGBoost models with soft voting ensemble, 
+                        achieving 20% improvement in financial strategy classification accuracy.
+                    </p>
+                    <div class="project-tech">
+                        <span class="ml-tag">NLP</span>
+                        <span class="ml-tag">XGBoost</span>
+                        <span class="ml-tag">Ensemble Methods</span>
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Scikit-learn</span>
+                    </div>
+                </div>
+                <div class="
