@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Celine Liu — Research Programmer</title>
+<meta name="description" content="Celine Liu — Computer science, UC Berkeley '25. ML systems, compiler autotuning, biomedical knowledge infrastructure.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:       #f6f3ea;
+    --paper-soft:  #eeeadc;
+    --paper-deep:  #e6e1cf;
+    --ink:         #111114;
+    --ink-soft:    #5a5a62;
+    --ink-dim:     #8a8a91;
+    --line:        #d8d2c2;
+    --line-soft:   #e4dfd0;
+    --accent:      #13293d;
+    --accent-soft: #2c4863;
+
+    --node-disease: #9b2c2c;
+    --node-drug:    #1e5f6b;
+    --node-gene:    #8a6511;
+    --node-trial:   #5d3a7a;
+    --node-source:  #2a2a2f;
+
+    --serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+    --sans:  'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono:  'JetBrains Mono', 'SF Mono', Menlo, monospace;
+
+    --container: 1180px;
+    --gutter: clamp(1.25rem, 4vw, 2.5rem);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15.5px;
+    line-height: 1.62;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* subtle paper grain */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 200;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.07 0 0 0 0 0.07 0 0 0 0 0.08 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  ::selection { background: var(--ink); color: var(--paper); }
+
+  a { color: inherit; text-decoration: none; }
+
+  .mono { font-family: var(--mono); font-size: 0.78em; letter-spacing: 0.01em; }
+  .serif { font-family: var(--serif); font-weight: 400; }
+  .small-caps {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .wrap {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  /* ─────────────────────── NAV ─────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.1rem 0;
+    background: color-mix(in srgb, var(--paper) 85%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease;
+  }
+  nav.scrolled { border-bottom-color: var(--line); }
+  nav .wrap {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  nav .name {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+  }
+  nav .name::before {
+    content: '●';
+    color: var(--accent);
+    margin-right: 0.55rem;
+    font-size: 0.7rem;
+    vertical-align: middle;
+  }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+  }
+  nav ul a {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+    transition: color 0.2s ease;
+    position: relative;
+  }
+  nav ul a:hover { color: var(--ink); }
+  nav ul a .num {
+    color: var(--ink-dim);
+    margin-right: 0.35rem;
+  }
+  @media (max-width: 720px) {
+    nav ul { display: none; }
+  }
+
+  /* ─────────────────────── HERO ─────────────────────── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding-top: 5.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    padding-top: 2.5rem;
+  }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.35rem 1.1rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+  .hero-meta dt {
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.62rem;
+    padding-top: 0.15rem;
+  }
+  .hero-meta dd { color: var(--ink); }
+  .hero-meta dd .accent { color: var(--accent); }
+
+  .hero-index {
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+  }
+  .hero-index span { color: var(--ink-soft); }
+
+  @media (max-width: 720px) {
+    .hero-top { flex-direction: column; gap: 1rem; }
+    .hero-index { text-align: left; }
+  }
+
+  .hero-main {
+    display: grid;
+    grid-template-columns: minmax(320px, 1.1fr) minmax(320px, 1fr);
+    gap: 3rem;
+    align-items: center;
+    padding: 3rem 0 1rem;
+  }
+  @media (max-width: 880px) {
+    .hero-main { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+
+  .hero-text h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(3.8rem, 10vw, 7.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.018em;
+    color: var(--ink);
+    margin-bottom: 1.8rem;
+  }
+  .hero-text h1 .italic {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-text .lede {
+    font-size: 1.08rem;
+    line-height: 1.55;
+    color: var(--ink);
+    max-width: 36ch;
+    margin-bottom: 1.8rem;
+  }
+  .hero-text .lede em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.22em;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .hero-links {
+    display: flex;
+    gap: 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+  }
+  .hero-links a {
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2px;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .hero-links a:hover {
+    border-bottom-color: var(--accent);
+    color: var(--accent);
+  }
+  .hero-links a::after {
+    content: '↗';
+    margin-left: 0.35rem;
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+  .hero-links a:hover::after { transform: translate(2px, -2px); }
+
+  /* graph area */
+  .graph-stage {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    max-width: 560px;
+    margin-left: auto;
+    background: var(--paper);
+  }
+  .graph-stage::before,
+  .graph-stage::after {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    border: 1px solid var(--ink-soft);
+    opacity: 0.6;
+  }
+  .graph-stage::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+  .graph-stage::after  { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+  .graph-stage .corner-tr,
+  .graph-stage .corner-bl {
+    position: absolute;
+    width: 14px; height: 14px;
+    border: 1px solid var(--ink-soft);
+    opacity: 0.6;
+  }
+  .graph-stage .corner-tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
+  .graph-stage .corner-bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
+
+  #graph-canvas { width: 100%; height: 100%; display: block; cursor: grab; }
+  #graph-canvas:active { cursor: grabbing; }
+
+  .graph-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.45rem 0.7rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    transform: translate(-50%, -140%);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 5;
+  }
+  .graph-tooltip .type {
+    color: var(--paper-deep);
+    text-transform: uppercase;
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    margin-right: 0.4rem;
+    opacity: 0.7;
+  }
+  .graph-tooltip.on { opacity: 1; }
+
+  .graph-legend {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 0.2rem 0.9rem;
+    background: color-mix(in srgb, var(--paper) 92%, transparent);
+    padding: 0.4rem 0.55rem;
+    border: 1px solid var(--line-soft);
+  }
+  .graph-legend .dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    margin-right: 0.4rem;
+    vertical-align: 1px;
+  }
+
+  .graph-badge {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    background: color-mix(in srgb, var(--paper) 85%, transparent);
+    padding: 0.3rem 0.5rem;
+    border: 1px solid var(--line-soft);
+  }
+  .graph-badge .live {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #4c8b55;
+    margin-right: 0.45rem;
+    vertical-align: 1px;
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 1; }
+  }
+
+  .hero-caption {
+    border-top: 1px solid var(--line);
+    padding-top: 0.9rem;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 2rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.01em;
+  }
+  .hero-caption .fig {
+    color: var(--ink-dim);
+    margin-right: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.62rem;
+  }
+  .hero-caption .scroll {
+    font-family: var(--mono);
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    white-space: nowrap;
+  }
+  .hero-caption .scroll::before { content: '↓  '; }
+
+  /* ─────────────────────── SECTIONS ─────────────────────── */
+  section {
+    padding: 6rem 0;
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+
+  .section-header {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 2rem;
+    margin-bottom: 3.5rem;
+    align-items: baseline;
+  }
+  .section-header .num {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.14em;
+    padding-top: 0.6rem;
+  }
+  .section-header h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .section-header h2 .italic {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .section-header p {
+    grid-column: 2;
+    margin-top: 0.8rem;
+    color: var(--ink-soft);
+    max-width: 56ch;
+    font-size: 0.96rem;
+  }
+
+  @media (max-width: 640px) {
+    .section-header { grid-template-columns: 1fr; gap: 0.5rem; }
+    .section-header p { grid-column: 1; }
+  }
+
+  /* ─────────────────────── WORK ─────────────────────── */
+  .project {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 2rem;
+    padding: 2.5rem 0;
+    border-top: 1px solid var(--line-soft);
+  }
+  .project:last-child { border-bottom: 1px solid var(--line-soft); }
+
+  .project-meta {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.04em;
+    line-height: 1.8;
+  }
+  .project-meta .label {
+    text-transform: uppercase;
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    color: var(--ink-dim);
+    display: block;
+    margin-top: 0.8rem;
+  }
+  .project-meta .label:first-child { margin-top: 0; }
+  .project-meta .val { color: var(--ink-soft); display: block; }
+
+  .project-body h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.4rem;
+  }
+  .project-body .tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+  }
+  .project-body p {
+    margin-bottom: 1rem;
+    max-width: 64ch;
+    color: var(--ink);
+  }
+  .project-body p em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.08em;
+    color: var(--accent);
+  }
+
+  .project-body .highlights {
+    list-style: none;
+    margin: 1.2rem 0 1.5rem;
+    border-left: 1px solid var(--line);
+    padding-left: 1.3rem;
+    max-width: 64ch;
+  }
+  .project-body .highlights li {
+    position: relative;
+    padding: 0.3rem 0;
+    color: var(--ink-soft);
+    font-size: 0.94rem;
+  }
+  .project-body .highlights li::before {
+    content: '—';
+    position: absolute;
+    left: -1.3rem;
+    color: var(--ink-dim);
+    font-family: var(--mono);
+  }
+  .project-body .highlights li strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.5rem;
+    margin-top: 1.3rem;
+  }
+  .stack span {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.02em;
+    padding: 0.25rem 0.55rem;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    background: var(--paper-soft);
+  }
+
+  .project-links {
+    margin-top: 1.3rem;
+    display: flex;
+    gap: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+  }
+  .project-links a {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2px;
+    color: var(--ink);
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .project-links a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .project-links a::after {
+    content: '↗';
+    margin-left: 0.3rem;
+  }
+
+  @media (max-width: 640px) {
+    .project { grid-template-columns: 1fr; gap: 1rem; }
+  }
+
+  /* ─────────────────────── EXPERIENCE ─────────────────────── */
+  .exp {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--line-soft);
+  }
+  .exp:last-of-type { border-bottom: 1px solid var(--line-soft); }
+  .exp-date {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.04em;
+    padding-top: 0.35rem;
+    line-height: 1.5;
+  }
+  .exp-body h4 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.65rem;
+    line-height: 1.2;
+    margin-bottom: 0.2rem;
+  }
+  .exp-body h4 .company {
+    color: var(--accent);
+  }
+  .exp-body .role {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.65rem;
+  }
+  .exp-body p {
+    color: var(--ink-soft);
+    max-width: 62ch;
+    font-size: 0.96rem;
+  }
+  .exp-body p strong { color: var(--ink); font-weight: 500; }
+
+  @media (max-width: 640px) {
+    .exp { grid-template-columns: 1fr; gap: 0.5rem; }
+  }
+
+  /* ─────────────────────── BACKGROUND ─────────────────────── */
+  .bg-grid {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr;
+    gap: 2rem;
+  }
+  @media (max-width: 820px) {
+    .bg-grid { grid-template-columns: 1fr; gap: 2rem; }
+  }
+  .bg-label {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-dim);
+    padding-top: 0.4rem;
+  }
+  .bg-block h5 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+  }
+  .bg-block .sub {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+    margin-bottom: 1rem;
+  }
+  .bg-block p {
+    color: var(--ink-soft);
+    font-size: 0.94rem;
+    margin-bottom: 0.8rem;
+    max-width: 52ch;
+  }
+  .bg-block ul {
+    list-style: none;
+    columns: 1;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+    line-height: 2;
+  }
+  .bg-block ul li::before {
+    content: '→';
+    color: var(--ink-dim);
+    margin-right: 0.6rem;
+  }
+
+  /* ─────────────────────── SKILLS ─────────────────────── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(3, 1fr);
+    gap: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line-soft);
+    margin-top: 3rem;
+  }
+  @media (max-width: 820px) {
+    .skills-grid { grid-template-columns: 1fr; }
+  }
+  .skills-grid .label {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-dim);
+    padding-top: 0.2rem;
+  }
+  .skills-grid dt {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+  .skills-grid dd {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+
+  /* ─────────────────────── CONTACT ─────────────────────── */
+  #contact {
+    padding-bottom: 4rem;
+  }
+  .contact-wrap {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 2rem;
+  }
+  @media (max-width: 640px) {
+    .contact-wrap { grid-template-columns: 1fr; }
+  }
+  .contact-body h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 6vw, 4.2rem);
+    line-height: 1;
+    letter-spacing: -0.015em;
+    margin-bottom: 1.5rem;
+  }
+  .contact-body h2 em { font-style: italic; color: var(--accent); }
+  .contact-body p {
+    max-width: 52ch;
+    margin-bottom: 2rem;
+    color: var(--ink);
+    font-size: 1.05rem;
+  }
+  .contact-list {
+    list-style: none;
+    display: grid;
+    gap: 0.2rem;
+    max-width: 440px;
+    border-top: 1px solid var(--line);
+  }
+  .contact-list li {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--line-soft);
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+  }
+  .contact-list .k {
+    text-transform: uppercase;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    color: var(--ink-dim);
+  }
+  .contact-list a {
+    color: var(--ink);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .contact-list a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .contact-list .arr { color: var(--ink-dim); }
+
+  /* ─────────────────────── FOOTER ─────────────────────── */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 2rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.04em;
+    flex-wrap: wrap;
+  }
+  footer .mark {
+    color: var(--ink-soft);
+  }
+
+  /* ─────────── FIGURES (shared) ─────────── */
+  .figure {
+    margin: 1.8rem 0 0.4rem;
+    padding: 1.4rem 1.4rem 1.2rem;
+    background: var(--paper-soft);
+    border: 1px solid var(--line);
+    max-width: 64ch;
+  }
+  .figure.wide { max-width: none; }
+  .fig-caption {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--line-soft);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    letter-spacing: 0.01em;
+    max-width: 62ch;
+  }
+  .fig-caption .fig-num {
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.62rem;
+    margin-right: 0.55rem;
+  }
+  .fig-caption em {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.1em;
+    color: var(--accent);
+  }
+
+  /* ─────────── RL ARCHITECTURE DIAGRAM ─────────── */
+  .rl-diagram {
+    width: 100%;
+    display: block;
+    font-family: var(--mono);
+    overflow: visible;
+  }
+  .rl-diagram .node rect {
+    fill: var(--paper);
+    stroke: var(--ink);
+    stroke-width: 1.2;
+  }
+  .rl-diagram .node .lbl {
+    font-family: var(--mono);
+    font-size: 11px;
+    fill: var(--ink);
+    text-anchor: middle;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+  .rl-diagram .node .sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    fill: var(--ink-soft);
+    text-anchor: middle;
+  }
+  .rl-diagram .node .tiny {
+    font-family: var(--mono);
+    font-size: 9px;
+    fill: var(--ink-dim);
+    letter-spacing: 0.06em;
+    text-anchor: middle;
+  }
+  .rl-diagram .arr {
+    stroke: var(--ink);
+    stroke-width: 1.3;
+    fill: none;
+  }
+  .rl-diagram .arr-soft {
+    stroke: var(--ink-soft);
+    stroke-width: 1;
+    fill: none;
+    stroke-dasharray: 4 3;
+  }
+  .rl-diagram .edgelbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    fill: var(--ink);
+    text-anchor: middle;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .rl-diagram .edgelbl-sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12px;
+    fill: var(--ink-soft);
+    text-anchor: middle;
+  }
+  .rl-diagram .dot { fill: var(--accent); }
+  .rl-diagram .dot-soft { fill: var(--accent-soft); opacity: 0.7; }
+
+  /* ─────────── BIOLENS INTERACTIVE DEMO ─────────── */
+  .biolens-demo {
+    margin: 1.8rem 0 0.4rem;
+    border: 1px solid var(--line);
+    background: var(--paper-soft);
+    font-family: var(--mono);
+    overflow: hidden;
+    max-width: none;
+  }
+  .demo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.55rem 1rem;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-dim);
+    background: var(--paper);
+  }
+  .demo-header .demo-title { color: var(--ink); }
+  .demo-body {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    min-height: 300px;
+  }
+  @media (max-width: 760px) {
+    .demo-body { grid-template-columns: 1fr; }
+  }
+  .demo-left {
+    padding: 1.2rem;
+    border-right: 1px solid var(--line-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  @media (max-width: 760px) {
+    .demo-left { border-right: 0; border-bottom: 1px solid var(--line-soft); }
+  }
+  .query-box {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px dashed var(--line);
+    min-height: 2.4rem;
+  }
+  .query-box .caret { color: var(--accent); font-size: 0.9rem; }
+  .query-box .query-text {
+    flex: 1;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .query-box .cursor {
+    color: var(--accent);
+    animation: blink 1.1s steps(2) infinite;
+    font-size: 0.8rem;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .entities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    min-height: 1.7rem;
+  }
+  .entities .pill {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    padding: 0.22rem 0.55rem;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .entities .pill.in { opacity: 1; transform: translateY(0); }
+  .entities .pill .k {
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+  }
+  .entities .pill .v { color: var(--ink); }
+  .result {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--ink);
+    background: var(--paper);
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--line-soft);
+    border-left: 2px solid var(--accent);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    min-height: 4rem;
+    font-family: var(--mono);
+  }
+  .result.in { opacity: 1; transform: translateY(0); }
+  .result .ret {
+    display: block;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-dim);
+    margin-bottom: 0.4rem;
+  }
+  .demo-right { padding: 1.2rem; }
+  .tools-title {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-dim);
+    margin-bottom: 0.7rem;
+  }
+  .tools-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+  .tools-list li {
+    display: grid;
+    grid-template-columns: 10px 1fr auto;
+    gap: 0.55rem;
+    padding: 0.4rem 0.45rem;
+    align-items: center;
+    font-size: 0.74rem;
+    color: var(--ink-soft);
+    border-left: 2px solid transparent;
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  .tools-list li .bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--line);
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .tools-list li .name { font-family: var(--mono); letter-spacing: 0.01em; }
+  .tools-list li .src {
+    font-size: 0.6rem;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .tools-list li.active {
+    background: var(--paper);
+    color: var(--ink);
+    border-left-color: var(--accent);
+  }
+  .tools-list li.active .bullet {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+    transform: scale(1.2);
+  }
+  .tools-list li.active .src { color: var(--accent); }
+
+  /* reveal animations */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal.d1 { transition-delay: 0.08s; }
+  .reveal.d2 { transition-delay: 0.16s; }
+  .reveal.d3 { transition-delay: 0.24s; }
+  .reveal.d4 { transition-delay: 0.32s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wrap">
+    <div class="name">Celine Liu &nbsp;<span style="color:var(--ink-dim)">/ Yanjun</span></div>
+    <ul>
+      <li><a href="#work"><span class="num">01</span>Work</a></li>
+      <li><a href="#experience"><span class="num">02</span>Experience</a></li>
+      <li><a href="#background"><span class="num">03</span>Background</a></li>
+      <li><a href="#contact"><span class="num">04</span>Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ─────────────── HERO ─────────────── -->
+<header class="hero">
+  <div class="wrap">
+
+    <div class="hero-top reveal">
+      <dl class="hero-meta">
+        <dt>Status</dt><dd>Seeking <span class="accent">research programmer</span> roles · San Diego, CA</dd>
+        <dt>Focus</dt><dd>ML systems · compiler autotuning · biomedical data</dd>
+        <dt>Updated</dt><dd>April 2026</dd>
+      </dl>
+      <div class="hero-index">
+        <span>01 </span>WORK<br>
+        <span>02 </span>EXPERIENCE<br>
+        <span>03 </span>BACKGROUND<br>
+        <span>04 </span>CONTACT
+      </div>
+    </div>
+
+    <div class="hero-main">
+      <div class="hero-text">
+        <h1 class="reveal d1">
+          Celine<br>
+          <span class="italic">Liu.</span>
+        </h1>
+        <p class="lede reveal d2">
+          Computer science, <em>UC&nbsp;Berkeley</em> '25. My work lives between ML systems and biomedical knowledge infrastructure — reinforcement‑learned compiler autotuning for bare‑metal ML acceleration, and open‑source tooling for biomedical research.
+        </p>
+        <div class="hero-links reveal d3">
+          <a href="#work">Selected work</a>
+          <a href="https://github.com/celineliu" target="_blank" rel="noopener">GitHub</a>
+          <a href="mailto:celinelyj@berkeley.edu">Email</a>
+        </div>
+      </div>
+
+      <div class="graph-stage reveal d2">
+        <span class="corner-tr"></span>
+        <span class="corner-bl"></span>
+        <canvas id="graph-canvas"></canvas>
+        <div class="graph-badge"><span class="live"></span>live · biolens</div>
+        <div class="graph-legend">
+          <span><span class="dot" style="background:var(--node-disease)"></span>disease</span>
+          <span><span class="dot" style="background:var(--node-drug)"></span>drug</span>
+          <span><span class="dot" style="background:var(--node-gene)"></span>gene</span>
+          <span><span class="dot" style="background:var(--node-trial)"></span>trial</span>
+          <span><span class="dot" style="background:var(--node-source)"></span>source</span>
+          <span style="color:var(--ink-dim)">drag · hover</span>
+        </div>
+        <div class="graph-tooltip" id="tooltip"><span class="type"></span><span class="lbl"></span></div>
+      </div>
+    </div>
+
+    <div class="hero-caption reveal d4">
+      <div>
+        <span class="fig">fig. 01</span>BioLens — 3D force‑directed view of a biomedical knowledge graph integrating PubMed, OpenFDA, Open Targets, and ClinicalTrials.gov.
+      </div>
+      <div class="scroll">Scroll</div>
+    </div>
+  </div>
+</header>
+
+<!-- ─────────────── 01 WORK ─────────────── -->
+<section id="work">
+  <div class="wrap">
+    <div class="section-header reveal">
+      <div class="num">§ 01</div>
+      <h2>Selected <span class="italic">work</span>.</h2>
+      <p>Two projects that shape how I think about the work I want to do next — one at the compiler–hardware boundary, one at the knowledge–graph layer of biomedical research.</p>
+    </div>
+
+    <!-- Project 1: RL Autotuning -->
+    <article class="project reveal">
+      <div class="project-meta">
+        <span class="label">Year</span><span class="val">2024 — 2025</span>
+        <span class="label">Role</span><span class="val">Sole author</span>
+        <span class="label">Domain</span><span class="val">Compiler · RL · ML sys</span>
+        <span class="label">Stack</span><span class="val">PyTorch · PPO · Verilator · C</span>
+      </div>
+      <div class="project-body">
+        <h3>RL‑Guided Compiler Autotuning with Surrogate Forecasting</h3>
+        <p class="tagline">Teaching a policy to tune compiler schedules faster than the search itself can.</p>
+
+        <p>
+          Bare‑metal ML acceleration lives or dies by the quality of its compiled schedules — tile shapes, loop orders, allocation choices. The standard answer is exhaustive or random search, which scales badly as workloads diversify. This project asked a sharper question: <em>can a learned policy, guided by cheap surrogates of the expensive objective, find good schedules in a fraction of the search budget?</em>
+        </p>
+
+        <p>
+          The framework couples a PPO agent with a cycle‑accurate hardware simulator in a tight loop, and layers a sequence‑based forecasting model on top of the partial tuning trajectory to predict terminal reward and cycle counts. Those forecasts drive two things: early stopping of unpromising rollouts, and candidate prioritization for the next step of search. The result is a co‑designed pipeline where the compiler, the hardware model, and the learning loop are all aware of one another.
+        </p>
+
+        <ul class="highlights">
+          <li><strong>Compiler–hardware co‑design.</strong> Policy actions operate over the real schedule space the simulator exposes, not an abstracted surrogate.</li>
+          <li><strong>Workload‑family generalization.</strong> Evaluated against held‑out shapes and constraint regimes via replay traces and ablation.</li>
+          <li><strong>Surrogate forecasting.</strong> Trajectory‑conditioned predictors cut wall‑clock tuning time while keeping final schedule quality within a tight margin of exhaustive baselines.</li>
+        </ul>
+
+        <figure class="figure wide">
+          <svg class="rl-diagram" viewBox="0 0 780 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RL autotuning architecture diagram">
+            <defs>
+              <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#111114"/>
+              </marker>
+              <marker id="arr-soft" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#5a5a62"/>
+              </marker>
+            </defs>
+
+            <!-- nodes -->
+            <g class="node">
+              <rect x="40"  y="55" width="160" height="90" rx="2"/>
+              <text x="120" y="85"  class="lbl">POLICY</text>
+              <text x="120" y="108" class="sub">PPO agent</text>
+              <text x="120" y="126" class="tiny">π ( a | s )</text>
+            </g>
+            <g class="node">
+              <rect x="310" y="55" width="160" height="90" rx="2"/>
+              <text x="390" y="85"  class="lbl">SIMULATOR</text>
+              <text x="390" y="108" class="sub">cycle‑accurate</text>
+              <text x="390" y="126" class="tiny">Verilator · C</text>
+            </g>
+            <g class="node">
+              <rect x="580" y="55" width="170" height="90" rx="2"/>
+              <text x="665" y="85"  class="lbl">FORECASTER</text>
+              <text x="665" y="108" class="sub">trajectory predictor</text>
+              <text x="665" y="126" class="tiny">LSTM · trajectory‑conditioned</text>
+            </g>
+
+            <!-- forward arrows -->
+            <path id="fwd1" d="M 200 100 L 310 100" class="arr" marker-end="url(#arr)"/>
+            <path id="fwd2" d="M 470 100 L 580 100" class="arr" marker-end="url(#arr)"/>
+
+            <text x="255" y="86"  class="edgelbl">action</text>
+            <text x="255" y="120" class="edgelbl-sub">schedule · tile · order</text>
+            <text x="525" y="86"  class="edgelbl">trajectory</text>
+            <text x="525" y="120" class="edgelbl-sub">partial rollout</text>
+
+            <!-- feedback: simulator → reward → policy -->
+            <path id="fb1" d="M 390 145 V 190 H 120 V 145" class="arr-soft" marker-end="url(#arr-soft)"/>
+            <text x="255" y="183" class="edgelbl">reward</text>
+            <text x="255" y="208" class="edgelbl-sub">cycle count</text>
+
+            <!-- feedback: forecaster → predicted terminal → policy (outer loop) -->
+            <path id="fb2" d="M 665 145 V 250 H 120 V 145" class="arr-soft" marker-end="url(#arr-soft)"/>
+            <text x="390" y="243" class="edgelbl">predicted terminal reward</text>
+            <text x="390" y="268" class="edgelbl-sub">→ early stop · candidate rank</text>
+
+            <!-- animated flow dots -->
+            <circle class="dot" r="3.2">
+              <animateMotion dur="2.4s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#fwd1"/>
+              </animateMotion>
+            </circle>
+            <circle class="dot" r="3.2">
+              <animateMotion dur="2.4s" begin="0.7s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#fwd2"/>
+              </animateMotion>
+            </circle>
+            <circle class="dot-soft" r="2.8">
+              <animateMotion dur="3.4s" begin="1.3s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#fb1"/>
+              </animateMotion>
+            </circle>
+            <circle class="dot-soft" r="2.8">
+              <animateMotion dur="4.2s" begin="2s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#fb2"/>
+              </animateMotion>
+            </circle>
+          </svg>
+          <figcaption class="fig-caption">
+            <span class="fig-num">fig. 02</span>
+            The RL loop with <em>surrogate forecasting</em>. Standard PPO returns a single reward signal from the cycle‑accurate simulator (inner feedback); the forecaster reads the unfolding trajectory and produces a <em>predicted terminal reward</em> that gates early stopping and reranks the next batch of rollouts (outer feedback). Two learning signals, one policy.
+          </figcaption>
+        </figure>
+
+        <div class="stack">
+          <span>PyTorch</span><span>Stable‑Baselines3</span><span>Verilator</span><span>C</span><span>Python</span><span>Pandas</span><span>NumPy</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Project 2: BioLens -->
+    <article class="project reveal">
+      <div class="project-meta">
+        <span class="label">Year</span><span class="val">2025</span>
+        <span class="label">Role</span><span class="val">Lead engineer</span>
+        <span class="label">Domain</span><span class="val">Biomedical · knowledge graph</span>
+        <span class="label">Status</span><span class="val">Open source</span>
+      </div>
+      <div class="project-body">
+        <h3>BioLens — a biomedical knowledge graph for research exploration</h3>
+        <p class="tagline">Diseases, drugs, genes, and trials — integrated, queryable, and visual.</p>
+
+        <p>
+          Biomedical researchers routinely reach for four or five different public data sources just to check a single hypothesis — PubMed for literature, OpenFDA for adverse events, Open Targets for target–disease evidence, ClinicalTrials.gov for trial records. <em>BioLens</em> stitches those into a single exploratory surface: a force‑directed knowledge graph you can pan through, filter, and expand, backed by an LLM agent that speaks the same schema.
+        </p>
+
+        <p>
+          Under the hood, an async <strong>FastAPI</strong> backend fans out concurrent queries to the four source APIs, normalizes entities, and stores the results in a graph store. The frontend is a <strong>Next.js/TypeScript</strong> app that renders the network in <strong>D3</strong> with zoom, pan, and click‑to‑expand on any entity, plus Vega‑Lite charts for statistical summaries. The interesting layer is the <strong>MCP server</strong> that exposes six research tools to an LLM‑based coding agent — natural‑language queries turn into schema‑aware graph updates in the UI.
+        </p>
+
+        <ul class="highlights">
+          <li><strong>Four sources, one graph.</strong> Async concurrent ingestion across PubMed, ClinicalTrials.gov, OpenFDA, and Open Targets.</li>
+          <li><strong>MCP‑exposed research tools.</strong> Six tools let a coding agent operate on the graph natively — chat becomes a first‑class query surface.</li>
+          <li><strong>Shipped cleanly.</strong> Dockerized end‑to‑end, GitHub Actions CI/CD, open source from day one.</li>
+        </ul>
+
+        <figure class="figure wide" style="padding:0; background: transparent; border: 0;">
+          <div class="biolens-demo">
+            <div class="demo-header">
+              <span class="demo-title">/ ASK BIOLENS &nbsp;&middot;&nbsp; nl → mcp → graph</span>
+              <span id="demoCounter">query 1 / 3</span>
+            </div>
+            <div class="demo-body">
+              <div class="demo-left">
+                <div class="query-box">
+                  <span class="caret">▸</span>
+                  <span class="query-text" id="queryText"></span><span class="cursor">▍</span>
+                </div>
+                <div>
+                  <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.16em;color:var(--ink-dim);margin-bottom:0.5rem;">extracted entities</div>
+                  <div class="entities" id="entities"></div>
+                </div>
+                <div class="result" id="resultBox"></div>
+              </div>
+              <div class="demo-right">
+                <div class="tools-title">MCP · 6 tools exposed</div>
+                <ul class="tools-list" id="toolsList">
+                  <li data-tool="search_literature">
+                    <span class="bullet"></span>
+                    <span class="name">search_literature</span>
+                    <span class="src">PubMed</span>
+                  </li>
+                  <li data-tool="find_clinical_trials">
+                    <span class="bullet"></span>
+                    <span class="name">find_clinical_trials</span>
+                    <span class="src">CT.gov</span>
+                  </li>
+                  <li data-tool="lookup_adverse_events">
+                    <span class="bullet"></span>
+                    <span class="name">lookup_adverse_events</span>
+                    <span class="src">OpenFDA</span>
+                  </li>
+                  <li data-tool="get_target_associations">
+                    <span class="bullet"></span>
+                    <span class="name">get_target_associations</span>
+                    <span class="src">Open&nbsp;Targets</span>
+                  </li>
+                  <li data-tool="expand_entity">
+                    <span class="bullet"></span>
+                    <span class="name">expand_entity</span>
+                    <span class="src">graph</span>
+                  </li>
+                  <li data-tool="summarize_subgraph">
+                    <span class="bullet"></span>
+                    <span class="name">summarize_subgraph</span>
+                    <span class="src">LLM</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <figcaption class="fig-caption" style="margin-top:1rem;">
+            <span class="fig-num">fig. 03</span>
+            Natural language → MCP tool selection → graph update. The LLM agent parses user queries into typed entities, then <em>picks from six schema‑aware tools</em> exposed by the MCP server — each wrapping one of BioLens's upstream data sources. Demo cycles through three representative queries.
+          </figcaption>
+        </figure>
+
+        <div class="stack">
+          <span>Python</span><span>FastAPI</span><span>Next.js</span><span>TypeScript</span><span>D3.js</span><span>Vega‑Lite</span><span>MCP</span><span>Docker</span><span>GitHub Actions</span>
+        </div>
+
+        <div class="project-links">
+          <a href="https://github.com/celineliu0116/biolens" target="_blank" rel="noopener">github.com/celineliu0116/biolens</a>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ─────────────── 02 EXPERIENCE ─────────────── -->
+<section id="experience">
+  <div class="wrap">
+    <div class="section-header reveal">
+      <div class="num">§ 02</div>
+      <h2>Industry <span class="italic">experience</span>.</h2>
+      <p>Four roles across ML infrastructure, full‑stack systems, and applied AI product work.</p>
+    </div>
+
+    <div class="exp reveal">
+      <div class="exp-date">Sep 2025<br>—<br>Jan 2026</div>
+      <div class="exp-body">
+        <h4>Full‑Stack Software Engineer, <span class="company">Effective AI</span></h4>
+        <div class="role">Insurance AI · agent infra</div>
+        <p>
+          Built a <strong>provider‑agnostic agent loop</strong> powering LLM‑driven underwriting and claims workflows with streaming responses, tool orchestration, and multi‑tenant isolation via PostgreSQL row‑level security. Engineered <strong>Temporal</strong> workflows for SERFF filings — automated Python rater generation, loss‑run extraction, and parallel subagent table computations — increasing actuarial throughput <strong>8×</strong>. Semantic + keyword search with Turbopuffer and a vault‑style React UI for filings management.
+        </p>
+      </div>
+    </div>
+
+    <div class="exp reveal">
+      <div class="exp-date">Sep 2024<br>—<br>Dec 2024</div>
+      <div class="exp-body">
+        <h4>AI/ML Engineer, <span class="company">DoorDash</span></h4>
+        <div class="role">Delivery ML infrastructure</div>
+        <p>
+          Implemented a scalable data pipeline (<strong>Python, Spark, AWS S3/Redshift</strong>) to ingest and transform <strong>50M+ daily order events</strong> for real‑time model training and evaluation, reducing feature‑extraction latency by <strong>70%</strong>. Deployed an ML‑driven delivery‑time prediction service using <strong>XGBoost</strong> and <strong>TensorFlow Serving</strong>.
+        </p>
+      </div>
+    </div>
+
+    <div class="exp reveal">
+      <div class="exp-date">Sep 2024<br>—<br>Jun 2025</div>
+      <div class="exp-body">
+        <h4>Machine Learning Engineer, <span class="company">BLCK UNICRN</span></h4>
+        <div class="role">Applied AI · multi‑agent systems</div>
+        <p>
+          Architected a <strong>LangChain</strong>‑based multi‑agent system for real‑time immersive experience ideation and task automation — integrating tool use across DALL·E 3, Playwright, and custom APIs.
+        </p>
+      </div>
+    </div>
+
+    <div class="exp reveal">
+      <div class="exp-date">Jan 2023<br>—<br>May 2025</div>
+      <div class="exp-body">
+        <h4>Founding Engineer, <span class="company">I‑Learning</span></h4>
+        <div class="role">Edtech · applied LLMs</div>
+        <p>
+          Deployed <strong>OpenAI API</strong>‑powered learning tools using RLHF feedback loops to personalize study workflows. Built computer‑vision features — vocabulary lookup via <strong>OpenCV</strong> and <strong>scikit‑image</strong> — with user data persisted in GCS.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── 03 BACKGROUND ─────────────── -->
+<section id="background">
+  <div class="wrap">
+    <div class="section-header reveal">
+      <div class="num">§ 03</div>
+      <h2>Background &amp; <span class="italic">training</span>.</h2>
+      <p>Berkeley trained me to build systems and read papers with the same rigor. The coursework below is what I keep reaching back to.</p>
+    </div>
+
+    <div class="bg-grid reveal">
+      <div class="bg-label">Degree</div>
+      <div class="bg-block">
+        <h5>B.A. Computer Science</h5>
+        <div class="sub">University of California, Berkeley · May 2025</div>
+        <p>GPA 3.63 · Math &amp; Physical Sciences Scholar.</p>
+        <p style="font-size: 0.88rem; color: var(--ink-dim);">Selected for the honors cohort recognizing top academic performance across the College of Letters &amp; Science math and physical sciences divisions.</p>
+      </div>
+      <div class="bg-block">
+        <h5>Relevant coursework</h5>
+        <div class="sub">Systems · ML · theory</div>
+        <ul>
+          <li>Computer Architecture &amp; Engineering</li>
+          <li>Operating Systems &amp; Systems Programming</li>
+          <li>Efficient Algorithms &amp; Intractable Problems</li>
+          <li>Deep Learning</li>
+          <li>Digital Signal Processing</li>
+          <li>Natural Language Processing</li>
+          <li>Data Engineering</li>
+          <li>Security &amp; Privacy</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="skills-grid reveal">
+      <div class="label">Toolkit</div>
+      <dl>
+        <dt>Languages</dt>
+        <dd>Python · C · C++ · Rust · Go · TypeScript · JavaScript · Java · C# · Swift · SQL · MATLAB</dd>
+      </dl>
+      <dl>
+        <dt>ML / data</dt>
+        <dd>PyTorch · TensorFlow · NumPy · Pandas · XGBoost · D3.js · Vega‑Lite · Spark · Jupyter</dd>
+      </dl>
+      <dl>
+        <dt>Infrastructure</dt>
+        <dd>Docker · Kubernetes · AWS · GCP · PostgreSQL · MongoDB · Elasticsearch · GitHub Actions · Linux · Temporal</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────── 04 CONTACT ─────────────── -->
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-wrap reveal">
+      <div class="num" style="font-family:var(--mono);font-size:0.72rem;color:var(--ink-dim);letter-spacing:0.14em;padding-top:1rem;">§ 04</div>
+      <div class="contact-body">
+        <h2>Let's <em>talk</em>.</h2>
+        <p>
+          Actively looking for research programmer and ML systems roles in San Diego — particularly where biomedical research, scientific computing, or compiler / accelerator work is central. Fastest reply by email.
+        </p>
+        <ul class="contact-list">
+          <li><span class="k">Email</span><a href="mailto:celinelyj@berkeley.edu">celinelyj@berkeley.edu</a><span class="arr">↗</span></li>
+          <li><span class="k">GitHub</span><a href="https://github.com/celineliu" target="_blank" rel="noopener">github.com/celineliu</a><span class="arr">↗</span></li>
+          <li><span class="k">LinkedIn</span><a href="https://linkedin.com/in/celineliu" target="_blank" rel="noopener">linkedin.com/celineliu</a><span class="arr">↗</span></li>
+          <li><span class="k">Phone</span><a href="tel:+15105709007">(510) 570‑9007</a><span class="arr">↗</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+    <span class="mark">© 2026 Yanjun (Celine) Liu</span>
+    <span>Built with Three.js · handset in Instrument Serif, Geist, and JetBrains Mono</span>
+  </div>
+</footer>
+
+<!-- ─────────────── THREE.JS 3D GRAPH ─────────────── -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ───── graph data ─────
+const TYPE_COLORS = {
+  disease: 0x9b2c2c,
+  drug:    0x1e5f6b,
+  gene:    0x8a6511,
+  trial:   0x5d3a7a,
+  source:  0x2a2a2f,
+};
+
+const nodes = [
+  // diseases
+  { id: 'd1', label: "Alzheimer's Disease",  type: 'disease', size: 1.35 },
+  { id: 'd2', label: 'Type 2 Diabetes',      type: 'disease', size: 1.25 },
+  { id: 'd3', label: "Parkinson's Disease",  type: 'disease', size: 1.20 },
+  { id: 'd4', label: 'Breast Cancer',        type: 'disease', size: 1.25 },
+  { id: 'd5', label: 'Multiple Sclerosis',   type: 'disease', size: 1.10 },
+  { id: 'd6', label: "Crohn's Disease",      type: 'disease', size: 1.05 },
+
+  // drugs
+  { id: 'r1', label: 'Donepezil',      type: 'drug', size: 0.95 },
+  { id: 'r2', label: 'Metformin',      type: 'drug', size: 1.05 },
+  { id: 'r3', label: 'Levodopa',       type: 'drug', size: 0.95 },
+  { id: 'r4', label: 'Tamoxifen',      type: 'drug', size: 0.95 },
+  { id: 'r5', label: 'Aducanumab',     type: 'drug', size: 0.95 },
+  { id: 'r6', label: 'Interferon β',   type: 'drug', size: 0.90 },
+  { id: 'r7', label: 'Infliximab',     type: 'drug', size: 0.90 },
+
+  // genes
+  { id: 'g1', label: 'APOE',     type: 'gene', size: 0.95 },
+  { id: 'g2', label: 'BRCA1',    type: 'gene', size: 0.95 },
+  { id: 'g3', label: 'TP53',     type: 'gene', size: 1.05 },
+  { id: 'g4', label: 'SNCA',     type: 'gene', size: 0.88 },
+  { id: 'g5', label: 'HLA-DRB1', type: 'gene', size: 0.88 },
+  { id: 'g6', label: 'NOD2',     type: 'gene', size: 0.88 },
+  { id: 'g7', label: 'TNF',      type: 'gene', size: 0.95 },
+
+  // trials
+  { id: 't1', label: 'NCT04437511', type: 'trial', size: 0.78 },
+  { id: 't2', label: 'NCT03387774', type: 'trial', size: 0.78 },
+  { id: 't3', label: 'NCT02719327', type: 'trial', size: 0.78 },
+  { id: 't4', label: 'NCT05186831', type: 'trial', size: 0.78 },
+
+  // data sources (hubs)
+  { id: 's1', label: 'PubMed',            type: 'source', size: 1.55 },
+  { id: 's2', label: 'OpenFDA',           type: 'source', size: 1.35 },
+  { id: 's3', label: 'Open Targets',      type: 'source', size: 1.45 },
+  { id: 's4', label: 'ClinicalTrials.gov',type: 'source', size: 1.45 },
+];
+
+const edgeList = [
+  // drug → disease (treats)
+  ['r1','d1'],['r5','d1'],
+  ['r2','d2'],
+  ['r3','d3'],
+  ['r4','d4'],
+  ['r6','d5'],
+  ['r7','d6'],
+  // gene → disease (associated)
+  ['g1','d1'],
+  ['g2','d4'],['g3','d4'],
+  ['g4','d3'],
+  ['g5','d5'],
+  ['g6','d6'],['g7','d6'],
+  ['g3','d2'],
+  // trial → (disease, drug)
+  ['t1','d1'],['t1','r5'],
+  ['t2','d3'],['t2','r3'],
+  ['t3','d4'],['t3','r4'],
+  ['t4','d6'],['t4','r7'],
+  // sources → entities (feeds)
+  ['s1','d1'],['s1','d3'],['s1','d5'],['s1','g1'],['s1','g3'],['s1','g4'],
+  ['s2','r1'],['s2','r2'],['s2','r5'],['s2','r7'],
+  ['s3','g1'],['s3','g2'],['s3','g4'],['s3','g7'],['s3','d2'],
+  ['s4','t1'],['s4','t2'],['s4','t3'],['s4','t4'],
+];
+
+// build adjacency for highlight-on-hover
+const nodeIdx = new Map(nodes.map((n,i) => [n.id, i]));
+const neighbors = new Map(nodes.map(n => [n.id, new Set()]));
+edgeList.forEach(([a,b]) => {
+  neighbors.get(a).add(b);
+  neighbors.get(b).add(a);
+});
+
+// ───── scene setup ─────
+const canvas = document.getElementById('graph-canvas');
+const tooltip = document.getElementById('tooltip');
+const stage = canvas.parentElement;
+
+const scene = new THREE.Scene();
+scene.background = null; // transparent
+
+const cam = new THREE.PerspectiveCamera(42, 1, 0.1, 1000);
+cam.position.set(0, 0, 38);
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+function resize() {
+  const w = stage.clientWidth;
+  const h = stage.clientHeight;
+  renderer.setSize(w, h, false);
+  cam.aspect = w / h;
+  cam.updateProjectionMatrix();
+}
+resize();
+new ResizeObserver(resize).observe(stage);
+
+const controls = new OrbitControls(cam, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.enableZoom = false;
+controls.enablePan = false;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.45;
+controls.rotateSpeed = 0.7;
+
+// lighting
+scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+const key = new THREE.DirectionalLight(0xffffff, 0.6);
+key.position.set(5, 10, 7);
+scene.add(key);
+
+// ───── node positions (randomized sphere) ─────
+const R0 = 12;
+nodes.forEach(n => {
+  // pseudo-random but deterministic
+  const h = (n.id.charCodeAt(0) * 131 + n.id.charCodeAt(1) * 17) % 1000;
+  const phi = Math.acos(1 - 2 * ((h % 97) / 97));
+  const theta = 2 * Math.PI * ((h * 7 % 101) / 101);
+  n.pos = new THREE.Vector3(
+    R0 * Math.sin(phi) * Math.cos(theta),
+    R0 * Math.sin(phi) * Math.sin(theta),
+    R0 * Math.cos(phi)
+  );
+  n.vel = new THREE.Vector3();
+  // pin sources gently to a ring
+  if (n.type === 'source') {
+    const idx = ['s1','s2','s3','s4'].indexOf(n.id);
+    const ang = (idx / 4) * Math.PI * 2;
+    n.pos.set(Math.cos(ang) * 10, Math.sin(ang) * 10, (idx % 2 ? 1 : -1) * 3);
+  }
+});
+
+// ───── create meshes ─────
+const nodeGroup = new THREE.Group();
+scene.add(nodeGroup);
+
+const sphereGeo = new THREE.SphereGeometry(1, 22, 18);
+const nodeMeshes = [];
+
+nodes.forEach((n, i) => {
+  const mat = new THREE.MeshStandardMaterial({
+    color: TYPE_COLORS[n.type],
+    roughness: 0.55,
+    metalness: 0.05,
+  });
+  const m = new THREE.Mesh(sphereGeo, mat);
+  m.scale.setScalar(0.55 * n.size);
+  m.position.copy(n.pos);
+  m.userData = { id: n.id, label: n.label, type: n.type, baseColor: TYPE_COLORS[n.type], baseScale: 0.55 * n.size };
+  nodeGroup.add(m);
+  nodeMeshes.push(m);
+  n.mesh = m;
+});
+
+// ───── edges as single LineSegments ─────
+const edgePositions = new Float32Array(edgeList.length * 2 * 3);
+const edgeGeo = new THREE.BufferGeometry();
+edgeGeo.setAttribute('position', new THREE.BufferAttribute(edgePositions, 3));
+const edgeMat = new THREE.LineBasicMaterial({
+  color: 0x14141a,
+  transparent: true,
+  opacity: 0.17,
+});
+const edgeMesh = new THREE.LineSegments(edgeGeo, edgeMat);
+scene.add(edgeMesh);
+
+function updateEdges() {
+  for (let i = 0; i < edgeList.length; i++) {
+    const [a, b] = edgeList[i];
+    const na = nodes[nodeIdx.get(a)];
+    const nb = nodes[nodeIdx.get(b)];
+    const off = i * 6;
+    edgePositions[off+0] = na.pos.x;
+    edgePositions[off+1] = na.pos.y;
+    edgePositions[off+2] = na.pos.z;
+    edgePositions[off+3] = nb.pos.x;
+    edgePositions[off+4] = nb.pos.y;
+    edgePositions[off+5] = nb.pos.z;
+  }
+  edgeGeo.attributes.position.needsUpdate = true;
+}
+
+// ───── force-directed physics ─────
+const REST = 7;        // ideal edge length
+const K_SPRING = 0.04;
+const K_REPEL = 30;
+const K_CENTER = 0.015;
+const DAMPING = 0.86;
+
+function step() {
+  // repulsion pairwise
+  for (let i = 0; i < nodes.length; i++) {
+    const a = nodes[i];
+    for (let j = i + 1; j < nodes.length; j++) {
+      const b = nodes[j];
+      const dx = a.pos.x - b.pos.x;
+      const dy = a.pos.y - b.pos.y;
+      const dz = a.pos.z - b.pos.z;
+      let d2 = dx*dx + dy*dy + dz*dz;
+      if (d2 < 0.2) d2 = 0.2;
+      const invD = 1 / Math.sqrt(d2);
+      const f = K_REPEL / d2;
+      const fx = dx * invD * f, fy = dy * invD * f, fz = dz * invD * f;
+      a.vel.x += fx; a.vel.y += fy; a.vel.z += fz;
+      b.vel.x -= fx; b.vel.y -= fy; b.vel.z -= fz;
+    }
+  }
+  // spring attraction along edges
+  for (const [aid, bid] of edgeList) {
+    const a = nodes[nodeIdx.get(aid)];
+    const b = nodes[nodeIdx.get(bid)];
+    const dx = b.pos.x - a.pos.x;
+    const dy = b.pos.y - a.pos.y;
+    const dz = b.pos.z - a.pos.z;
+    const d = Math.sqrt(dx*dx + dy*dy + dz*dz) || 0.0001;
+    const f = K_SPRING * (d - REST);
+    const fx = dx / d * f, fy = dy / d * f, fz = dz / d * f;
+    a.vel.x += fx; a.vel.y += fy; a.vel.z += fz;
+    b.vel.x -= fx; b.vel.y -= fy; b.vel.z -= fz;
+  }
+  // centering + integrate
+  for (const n of nodes) {
+    n.vel.x -= n.pos.x * K_CENTER;
+    n.vel.y -= n.pos.y * K_CENTER;
+    n.vel.z -= n.pos.z * K_CENTER;
+    n.vel.multiplyScalar(DAMPING);
+    n.pos.addScaledVector(n.vel, 0.1);
+    n.mesh.position.copy(n.pos);
+  }
+}
+
+// pre-settle
+for (let i = 0; i < 220; i++) step();
+updateEdges();
+
+// ───── hover interaction ─────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hovered = null;
+
+function setHighlight(hoverId) {
+  const connected = hoverId ? neighbors.get(hoverId) : null;
+  for (const n of nodes) {
+    const isHover = n.id === hoverId;
+    const isConn  = hoverId && connected.has(n.id);
+    const dim = hoverId && !isHover && !isConn;
+    const mat = n.mesh.material;
+    if (dim) {
+      mat.opacity = 0.22;
+      mat.transparent = true;
+      n.mesh.scale.setScalar(n.mesh.userData.baseScale);
+    } else if (isHover) {
+      mat.opacity = 1;
+      mat.transparent = false;
+      n.mesh.scale.setScalar(n.mesh.userData.baseScale * 1.35);
+    } else {
+      mat.opacity = 1;
+      mat.transparent = false;
+      n.mesh.scale.setScalar(n.mesh.userData.baseScale);
+    }
+  }
+  edgeMat.opacity = hoverId ? 0.35 : 0.17;
+}
+
+function onPointerMove(ev) {
+  const rect = canvas.getBoundingClientRect();
+  const x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
+  const y = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
+  mouse.set(x, y);
+  raycaster.setFromCamera(mouse, cam);
+  const hits = raycaster.intersectObjects(nodeMeshes, false);
+  if (hits.length) {
+    const m = hits[0].object;
+    const id = m.userData.id;
+    if (hovered !== id) {
+      hovered = id;
+      setHighlight(id);
+      controls.autoRotate = false;
+    }
+    tooltip.classList.add('on');
+    tooltip.querySelector('.type').textContent = m.userData.type;
+    tooltip.querySelector('.lbl').textContent  = m.userData.label;
+    tooltip.style.left = (ev.clientX - rect.left) + 'px';
+    tooltip.style.top  = (ev.clientY - rect.top) + 'px';
+  } else if (hovered) {
+    hovered = null;
+    setHighlight(null);
+    tooltip.classList.remove('on');
+  } else {
+    tooltip.classList.remove('on');
+  }
+}
+canvas.addEventListener('pointermove', onPointerMove);
+canvas.addEventListener('pointerleave', () => {
+  hovered = null;
+  setHighlight(null);
+  tooltip.classList.remove('on');
+  controls.autoRotate = true;
+});
+
+// gentle continued jitter so the graph breathes
+let frame = 0;
+function animate() {
+  frame++;
+  if (frame % 2 === 0) {
+    // light ongoing relaxation
+    for (let i = 0; i < 1; i++) step();
+    updateEdges();
+  }
+  controls.update();
+  renderer.render(scene, cam);
+  requestAnimationFrame(animate);
+}
+animate();
+
+// ───── scroll reveals + nav state ─────
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+reveals.forEach(el => io.observe(el));
+
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}, { passive: true });
+
+// ───── BioLens demo (NL → MCP → graph) ─────
+const demoScript = [
+  {
+    query: "What phase 3 trials target Alzheimer's with anti‑amyloid drugs?",
+    entities: [
+      { k: 'disease',    v: "Alzheimer's Disease" },
+      { k: 'trial phase', v: '3' },
+      { k: 'drug class', v: 'anti‑amyloid mAb' },
+    ],
+    tools: ['find_clinical_trials', 'search_literature'],
+    result: "3 active trials · aducanumab (NCT04437511), lecanemab (NCT05462548), donanemab (NCT05822895). Cross‑referenced against 147 PubMed records, 2021–2024. Graph updated.",
+  },
+  {
+    query: "Gene–disease evidence for BRCA1 and breast cancer, with top co‑targets.",
+    entities: [
+      { k: 'gene',     v: 'BRCA1' },
+      { k: 'disease',  v: 'Breast Cancer' },
+      { k: 'relation', v: 'association' },
+    ],
+    tools: ['get_target_associations', 'summarize_subgraph'],
+    result: "Open Targets association score: 0.87 (strong). Evidence from OMIM, UniProt, ClinVar, GWAS Catalog. 2,147 linked publications. Top co‑targets: TP53, PALB2, CHEK2.",
+  },
+  {
+    query: "Adverse events for metformin in patients over 65 — summarize.",
+    entities: [
+      { k: 'drug',   v: 'Metformin' },
+      { k: 'cohort', v: 'age > 65' },
+      { k: 'query',  v: 'adverse events' },
+    ],
+    tools: ['lookup_adverse_events', 'search_literature', 'summarize_subgraph'],
+    result: "238 FAERS reports filtered to cohort. Top signals: lactic acidosis (4.2%), GI effects (18.7%), B12 deficiency (11.3%). LLM summary attached to subgraph.",
+  },
+];
+
+(function initBioLensDemo() {
+  const queryText = document.getElementById('queryText');
+  const entitiesEl = document.getElementById('entities');
+  const resultEl   = document.getElementById('resultBox');
+  const counter    = document.getElementById('demoCounter');
+  const demoEl     = document.querySelector('.biolens-demo');
+  if (!queryText || !demoEl) return;
+
+  const tools = demoEl.querySelectorAll('.tools-list li');
+  let idx = 0;
+  let timer = null;
+  let typeTimer = null;
+
+  function clearState() {
+    if (typeTimer) clearInterval(typeTimer);
+    queryText.textContent = '';
+    entitiesEl.innerHTML = '';
+    resultEl.classList.remove('in');
+    resultEl.innerHTML = '';
+    tools.forEach(t => t.classList.remove('active'));
+  }
+
+  function typeQuery(text, onDone) {
+    let i = 0;
+    queryText.textContent = '';
+    typeTimer = setInterval(() => {
+      queryText.textContent = text.slice(0, ++i);
+      if (i >= text.length) {
+        clearInterval(typeTimer);
+        typeTimer = null;
+        onDone && onDone();
+      }
+    }, 24);
+  }
+
+  function runStep(i) {
+    clearState();
+    const s = demoScript[i];
+    counter.textContent = `query ${i + 1} / ${demoScript.length}`;
+
+    typeQuery(s.query, () => {
+      // fade in entities
+      s.entities.forEach((e, j) => {
+        setTimeout(() => {
+          const pill = document.createElement('span');
+          pill.className = 'pill';
+          const k = document.createElement('span'); k.className = 'k'; k.textContent = e.k;
+          const v = document.createElement('span'); v.className = 'v'; v.textContent = e.v;
+          pill.appendChild(k); pill.appendChild(v);
+          entitiesEl.appendChild(pill);
+          requestAnimationFrame(() => pill.classList.add('in'));
+        }, j * 200);
+      });
+
+      // activate tools sequentially
+      const entityDelay = s.entities.length * 200 + 450;
+      s.tools.forEach((toolName, j) => {
+        setTimeout(() => {
+          const el = demoEl.querySelector(`[data-tool="${toolName}"]`);
+          if (el) el.classList.add('active');
+        }, entityDelay + j * 400);
+      });
+
+      // show result
+      setTimeout(() => {
+        const ret = document.createElement('span'); ret.className = 'ret'; ret.textContent = 'response';
+        resultEl.innerHTML = '';
+        resultEl.appendChild(ret);
+        resultEl.appendChild(document.createTextNode(s.result));
+        resultEl.classList.add('in');
+      }, entityDelay + s.tools.length * 400 + 700);
+    });
+  }
+
+  function cycle() {
+    timer = setTimeout(() => {
+      idx = (idx + 1) % demoScript.length;
+      runStep(idx);
+      cycle();
+    }, 9500);
+  }
+
+  // start only when in view (don't spin CPU for nothing)
+  const demoObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        runStep(idx);
+        cycle();
+        demoObs.disconnect();
+      }
+    });
+  }, { threshold: 0.25 });
+  demoObs.observe(demoEl);
+})();
+</script>
+
+</body>
+</html>
